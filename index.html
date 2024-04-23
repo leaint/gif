@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>GIF</title>
+    <style>
+        #box {
+            width: min-content;
+            border: 1px dashed gray;
+        }
+
+        #fpsscale {
+            width: 5em;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>GIF</h1>
+
+    <div id="app">
+        <div id="box">
+            <canvas id="gifcanvas"></canvas>
+        </div>
+        <div id="controller">
+            <div>
+                <label><input width="5" type="number" id="fpsscale" value="1">倍速</label>
+            </div>
+            <div>
+                <button id="play">Play</button>
+                <button id="stop">Stop</button>
+                <button id="prev">Prev</button>
+                <button id="next">Next</button>
+            </div>
+        </div>
+    </div>
+    <script src="base.js" type="module"></script>
+</body>
+</html>
