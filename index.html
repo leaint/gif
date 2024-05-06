@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,13 +9,32 @@
     <title>GIF</title>
     <style>
         #box {
-            width: min-content;
+            width: fit-content;
             border: 1px dashed gray;
         }
 
         #fpsscale {
             width: 5em;
             text-align: center;
+        }
+        
+        canvas {
+            max-width: 100%;
+        }
+        
+        #progress-box {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        #progressbar {
+            flex-grow: 1;
+        }
+        
+        #progresslabel {
+            min-width: 5em;
+            text-align:end;
+            font-family:monospace;
         }
     </style>
 </head>
@@ -28,16 +48,18 @@
         </div>
         <div id="controller">
             <div>
-                <label><input width="5" type="number" id="fpsscale" value="1">倍速</label>
+                <div id="progress-box"><input type="range" id="progressbar" value="0"><div id="progresslabel"></div></div>
+                <div><input width="5" type="number" id="fpsscale" value="1">倍速</div>
             </div>
             <div>
-                <button id="play">Play</button>
-                <button id="stop">Stop</button>
-                <button id="prev">Prev</button>
-                <button id="next">Next</button>
+                <button id="play">播放</button>
+                <button id="stop">暂停</button>
+                <button id="prev">上一张</button>
+                <button id="next">下一张</button>
             </div>
         </div>
     </div>
     <script src="base.js" type="module"></script>
 </body>
+
 </html>
