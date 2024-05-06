@@ -18,6 +18,10 @@ const canvas = document.querySelector("canvas")
  */
 const fpsScale = document.getElementById("fpsscale")
 
+const progressBar = document.getElementById("progressbar")
+
+const progressLabel = document.getElementById("progresslabel")
+
 const playBtn = document.getElementById("play")
 
 const stopBtn = document.getElementById("stop")
@@ -47,6 +51,7 @@ imgDecoder.completed.then(() => {
     return imgDecoder.decode()
 }).then((result) => {
     frameCount = imgDecoder.tracks.selectedTrack.frameCount
+    progressBar.max = frameCount - 1
     duration = result.image.duration / 1000.0 / 1000.0
     if (duration <= 0) {
         duration = 1 / deviceFps
@@ -80,7 +85,10 @@ function render(timestamp = 0) {
     if (curIndex >= frameCount || curIndex < 0) {
         curIndex = 0
     }
-
+    
+    progressBar.value = curIndex
+    progressLabel.textContent = `${curIndex+1}/${frameCount}`
+    
     let result
     if (delayResult != null) {
         result = delayResult
@@ -111,7 +119,16 @@ function render(timestamp = 0) {
 
 }
 
+progressBar.onchange = () => {
+    
+    if(progressBar.value != curIndex) {
+        curIndex = progressBar.value
+        render()
+    }
+    
+    progressLabel.textContent = `${+curIndex+1}/${frameCount}`
 
+}
 
 playBtn.onclick = () => {
 
