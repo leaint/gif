@@ -46,18 +46,21 @@
         <div id="box">
             <canvas id="gifcanvas"></canvas>
         </div>
-        <div id="controller">
-            <div>
-                <div id="progress-box"><input type="range" id="progressbar" value="0"><div id="progresslabel"></div></div>
-                <div><input width="5" type="number" id="fpsscale" value="1">倍速</div>
+        <details id="details">
+            <summary>工具栏</summary>
+            <div id="controller">
+                <div>
+                    <div id="progress-box"><input type="range" id="progressbar" value="0"><div id="progresslabel"></div></div>
+                    <div><input width="5" type="number" id="fpsscale" value="1">倍速</div>
+                </div>
+                <div>
+                    <button id="play">播放</button>
+                    <button id="stop">暂停</button>
+                    <button id="prev">上一张</button>
+                    <button id="next">下一张</button>
+                </div>
             </div>
-            <div>
-                <button id="play">播放</button>
-                <button id="stop">暂停</button>
-                <button id="prev">上一张</button>
-                <button id="next">下一张</button>
-            </div>
-        </div>
+        </details>
     </div>
     <script src="base.js" type="module"></script>
 </body>
