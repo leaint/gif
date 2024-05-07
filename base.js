@@ -18,6 +18,8 @@ const canvas = document.querySelector("canvas")
  */
 const fpsScale = document.getElementById("fpsscale")
 
+const details = document.getElementById("details")
+
 const progressBar = document.getElementById("progressbar")
 
 const progressLabel = document.getElementById("progresslabel")
@@ -30,13 +32,19 @@ const prevBtn = document.getElementById("prev")
 
 const nextBtn = document.getElementById("next")
 
+let open = false
+
+details.ontoggle = () => {
+    open = details.open
+}
+
 let frameCount
 let duration
 let fpsScaleValue
 let displayHeight
 let displayWidth
 
-let deviceFps = 30
+let deviceFps = 60
 
 fpsScale.onchange = () => {
     let t = parseFloat(fpsScale.value)
@@ -46,10 +54,9 @@ fpsScale.onchange = () => {
     }
 }
 
-imgDecoder.completed.then(() => {
+let curIndex = 0
 
-    return imgDecoder.decode()
-}).then((result) => {
+imgDecoder.completed.then(() => imgDecoder.decode()).then((result) => {
     frameCount = imgDecoder.tracks.selectedTrack.frameCount
     progressBar.max = frameCount - 1
     duration = result.image.duration / 1000.0 / 1000.0
@@ -57,7 +64,7 @@ imgDecoder.completed.then(() => {
         duration = 1 / deviceFps
     }
 
-    fpsScale.onchange(undefined)
+    fpsScale.onchange()
 
     displayHeight = result.image.displayHeight
     displayWidth = result.image.displayWidth
@@ -65,9 +72,7 @@ imgDecoder.completed.then(() => {
     canvas.width = displayWidth
     canvas.height = displayHeight
 
-    const ctx = canvas.getContext("2d")
-
-    ctx.drawImage(result.image, 0, 0)
+    canvas.getContext("2d").drawImage(result.image, 0, 0)
 
     curIndex = 0
     render()
@@ -77,46 +82,51 @@ let played = true
 
 let lastTimestamp = 0
 
-let curIndex
 let delayResult = null
-function render(timestamp = 0) {
 
+let aTime = 0
+let bTime = 0
+let timestamp1 = 0
+const ctx = canvas.getContext("2d")
+
+function resultProcess(result) {
+    bTime = Date.now()
+    if (played && bTime - aTime + timestamp1 - lastTimestamp < result.image.duration / 1000 / fpsScaleValue ) {
+        delayResult = result
+        requestAnimationFrame(render)
+        return
+    }
+    lastTimestamp = timestamp1
+
+    ctx.drawImage(result.image, 0, 0)
+
+    if (played) {
+        curIndex++
+        requestAnimationFrame(render)
+    }
+
+}
+
+function render(timestamp = 0) {
 
     if (curIndex >= frameCount || curIndex < 0) {
         curIndex = 0
     }
+
+    aTime = Date.now()
+    timestamp1 = timestamp
     
-    progressBar.value = curIndex
-    progressLabel.textContent = `${curIndex+1}/${frameCount}`
-    
-    let result
-    if (delayResult != null) {
-        result = delayResult
-        delayResult = null
+    if (delayResult === null) {
+        imgDecoder.decode({ frameIndex: curIndex }).then(resultProcess)
     } else {
-        result = imgDecoder.decode({ frameIndex: curIndex })
+        resultProcess(delayResult)
+        delayResult = null
     }
-    let aTime = Date.now()
-    result.then((result) => {
-        let bTime = Date.now()
-        if (played && timestamp + bTime - aTime - lastTimestamp < result.image.duration / 1000 / fpsScaleValue ) {
-            delayResult = Promise.resolve(result)
-            requestAnimationFrame(render)
-            return
-        }
-        lastTimestamp = timestamp
-
-
-        const ctx = canvas.getContext("2d")
-
-        ctx.drawImage(result.image, 0, 0)
-
-        if (played) {
-            curIndex++
-            requestAnimationFrame(render)
-        }
-    })
-
+    
+    if (open) {
+        progressBar.value = curIndex
+        progressLabel.textContent = `${curIndex+1}/${frameCount}`
+    }
 }
 
 progressBar.onchange = () => {
